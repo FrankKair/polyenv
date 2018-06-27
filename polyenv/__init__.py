@@ -8,7 +8,6 @@ __license__ = 'MIT'
 import sys
 from os import path
 from pytio import Tio, TioRequest
-# from .polyenv import run_programming_language
 
 
 def run_programming_language(language, input_file):
