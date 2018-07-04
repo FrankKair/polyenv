@@ -20,4 +20,4 @@ If you come across the following error:
 
 `ssl.SSLError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed (_ssl.c:777)`
 
-Just run `$ /Applications/Python\ 3.6/Install\ Certificates.command`.
+Just run `$ /Applications/Python\ 3.6/Install\ Certificates.command`
