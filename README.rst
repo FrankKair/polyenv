@@ -6,8 +6,8 @@ Polyenv
 .. image:: https://img.shields.io/pypi/v/polyenv.svg
         :target: https://pypi.python.org/pypi/polyenv
 
-.. image:: https://img.shields.io/travis/frankkair/polyenv.svg
-        :target: https://travis-ci.org/frankkair/polyenv
+.. image:: https://img.shields.io/travis/FrankKair/polyenv.svg
+        :target: https://travis-ci.org/FrankKair/polyenv
 
 
 Polyenv allows you to run any programming language.
