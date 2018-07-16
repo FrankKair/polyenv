@@ -7,6 +7,11 @@ from click.testing import CliRunner
 
 from polyenv import cli
 
+def test_calling_with_error_on_file(datadir):
+    python_file = datadir / 'test_ruby_error.rb'
+    runner = CliRunner()
+    result = runner.invoke(cli.main, ['ruby', str(python_file)])
+    assert ".code.tio:1:in `<main>': undefined method `putsssss_' for main:Object (NoMethodError)" in result.output
 
 
 def test_calling_python(datadir):
@@ -17,14 +22,12 @@ def test_calling_python(datadir):
     assert result.output == "Testing Python\n\n"
 
 
-
 def test_calling_ruby(datadir):
     ruby_file = datadir / 'test_ruby.rb'
     runner = CliRunner()
     result = runner.invoke(cli.main, ['ruby', str(ruby_file)])
     assert result.exit_code == 0
     assert result.output == "Testing Ruby\n\n"
-
 
 
 def test_command_line_interface():
