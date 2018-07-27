@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
+
 """Console script for polyenv."""
 import sys
 import click
 
 from polyenv import utils
-
 
 
 @click.command()
@@ -14,14 +14,11 @@ from polyenv import utils
 def main(language, file_path):
     """
     Language -> Language which will be used to run the file
-    File Path -> "Path to the location of the file"
-
+    File Path -> "Path to file location"
     """
     # TODO: Get extension and match language
     utils.run_programming_language(language, file_path)
 
 
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     sys.exit(main())  # pragma: no cover
