@@ -1,1 +1,0 @@
-putsssss_ 'Testing Ruby'
