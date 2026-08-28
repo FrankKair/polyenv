@@ -1,1 +1,0 @@
-puts 'Testing Ruby'
