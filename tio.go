@@ -3,7 +3,7 @@ package main
 import (
     "bytes"
     "compress/flate"
-    "enconding/json"
+    "encoding/json"
     "fmt"
     "io"
     "net/http"
@@ -34,12 +34,12 @@ func buildPayload(lang, code, stdin string) ([]byte, error) {
     payload.WriteString("R")
 
     var buf bytes.Buffer
-    w, err := flat.NewWriter(&buf, flat.BestCompression)
+    w, err := flate.NewWriter(&buf, flate.BestCompression)
     if err != nil {
         return nil, err
     }
     if _, err := w.Write([]byte(payload.String())); err != nil {
-        return nul, err
+        return nil, err
     }
     if err := w.Close(); err != nil {
         return nil, err

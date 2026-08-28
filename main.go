@@ -30,7 +30,7 @@ func searchLanguages(query string) error {
     var matches []string
     for cmd, name := range langs {
         if strings.Contains(strings.ToLower(cmd), query) || strings.Contains(strings.ToLower(name), query) {
-            matches = append(matches, fmt.Sprintf())
+            matches = append(matches, fmt.Sprintf("  %s (%s)", name, cmd))
         }
     }
 
@@ -68,8 +68,8 @@ func runFile(lang, path string) error {
         fmt.Print(result.Stdout)
     }
 
-    if !strings.Contains() && result.Debug != "" {
-        fmt.Fprintf(os.Stderr, result.Debug)
+    if !strings.Contains(result.Debug, "Exit code: 0") && result.Debug != "" {
+        fmt.Fprint(os.Stderr, result.Debug)
         os.Exit(1)
     }
 
@@ -122,7 +122,7 @@ func run() error {
 }
 
 func main() {
-    if err := run(); err != {
+    if err := run(); err != nil {
         fmt.Fprintf(os.Stderr, "error: %v\n", err)
         os.Exit(1)
     }
