@@ -10,7 +10,7 @@ Supports 680+ languages -- anything available on Try It Online.
 go install github.com/FrankKair/polyenv@latest
 ```
 
-## Install
+## Usage
 
 ```sh
 polyenv run python3 hello.py
