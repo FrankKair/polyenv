@@ -1,5 +1,7 @@
 # Polyenv
 
+[![CI](https://github.com/FrankKair/polyenv/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/FrankKair/polyenv/actions/workflows/ci.yml)
+
 Run any programming language from the command line via [tio.run](https://tio.run).
 
 Supports 680+ languages -- anything available on Try It Online.
