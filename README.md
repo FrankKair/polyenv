@@ -1,4 +1,4 @@
-# Polyenv
+# polyenv
 
 [![CI](https://github.com/FrankKair/polyenv/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/FrankKair/polyenv/actions/workflows/ci.yml)
 
@@ -30,7 +30,3 @@ polyenv version
 make build
 ./polyenv run python3 hello.py
 ```
-
-## Lincese
-
-MIT
