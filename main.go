@@ -7,17 +7,14 @@ import (
     "strings"
 )
 
-var version = "dev"
-
 func usage() {
-    fmt.Fprintf(os.Stderr, `polyenv %s -- run any programming language via tio.run
+    fmt.Fprint(os.Stderr, `polyenv -- run any programming language via tio.run
 
 Usage:
   polyenv run <language> <file>
   polyenv search <query>
   polyenv languages
-  polyenv version
-`, version)
+`)
 }
 
 func searchLanguages(query string) error {
@@ -59,9 +56,7 @@ func runFile(lang, path string) error {
     }
 
     if result.Error != "" {
-        fmt.Fprintf(os.Stderr, "error: languages '%s' not found\n", lang)
-        searchLanguages(lang)
-        os.Exit(1)
+        return fmt.Errorf("%s", strings.TrimSpace(result.Error))
     }
 
     if result.Stdout != "" {
@@ -112,9 +107,6 @@ func run() error {
         return searchLanguages(os.Args[2])
     case "languages":
         return listLanguages()
-    case "version":
-        fmt.Printf("polyenv %s\n", version)
-        return nil
     default:
         usage()
         return fmt.Errorf("unknown command: %s", os.Args[1])

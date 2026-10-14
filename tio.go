@@ -12,7 +12,7 @@ import (
 )
 
 const (
-    apiURL       = "https://tio.run/cgi-bin/run/api"
+    apiURL       = "https://tio.run/cgi-bin/run/api/"
     languagesURL = "https://tio.run/languages.json"
     tokenLen     = 16
 )
@@ -27,9 +27,9 @@ type Result struct {
 func buildPayload(lang, code, stdin string) ([]byte, error) {
     var payload strings.Builder
     fmt.Fprintf(&payload, "Vlang\x001\x00%s\x00", lang)
-    fmt.Fprintf(&payload, "F.code.tio\x00%d\x00%s\x00", len(code), code)
+    fmt.Fprintf(&payload, "F.code.tio\x00%d\x00%s", len(code), code)
     if stdin != "" {
-        fmt.Fprintf(&payload, "F.input.tio\x00%d\x00%s\x00", len(stdin), stdin)
+        fmt.Fprintf(&payload, "F.input.tio\x00%d\x00%s", len(stdin), stdin)
     }
     payload.WriteString("R")
 
@@ -60,6 +60,10 @@ func Run(lang, code string) (*Result, error) {
         return nil, fmt.Errorf("request failed: %w", err)
     }
     defer resp.Body.Close()
+
+    if resp.StatusCode != http.StatusOK {
+        return nil, fmt.Errorf("tio.run returned HTTP %s", resp.Status)
+    }
 
     body, err := io.ReadAll(resp.Body)
     if err != nil {

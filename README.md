@@ -21,7 +21,6 @@ polyenv run rust main.rs
 
 polyenv search haskell
 polyenv languages
-polyenv version
 ```
 
 ## Build from source

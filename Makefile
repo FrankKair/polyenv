@@ -1,10 +1,8 @@
-VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
-
 build: ## Build the binary
-	go build ldflags "-X main.version=$(VERSION)" -o polyenv .
+	go build -o polyenv .
 
 install: ## Install to GOPATH/bin
-	go install ldflags "-X main.version=$(VERSION)" .
+	go install .
 
 test: ## Run tests (unit only)
 	go test -v ./...
@@ -15,7 +13,7 @@ test-network: ## Run tests including network (hits tio.run)
 vet: ## Run go vet
 	go vet ./...
 
-lint: vet ## Run staticcheck (includes vet)
+lint: vet ## Run staticcheck (includes vet)
 	@command -v staticcheck >/dev/null 2>&1 || { echo "install staticcheck: go install honnef.co/go/tools/cmd/staticcheck@latest"; exit 1; }
 	staticcheck ./...
 

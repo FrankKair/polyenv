@@ -1,28 +1,69 @@
 package main
 
 import (
+    "bytes"
+    "compress/flate"
+    "io"
+    "net/http"
     "os"
+    "path/filepath"
     "strings"
     "testing"
 )
 
 func TestBuildPayload(t *testing.T) {
-    payload, err := buildPayload("python3", `print("hi")`, "")
-    if err != nil {
-        t.Fatalf("buildPayload: %v", err)
-    }
-    if len(payload) == 0 {
-        t.Fatal("payload is empty")
+    for _, tt := range []struct {
+        name, code, stdin, want string
+    }{
+        {"code", `puts :HELLO`, "", "Vlang\x001\x00ruby\x00F.code.tio\x0011\x00puts :HELLOR"},
+        {"stdin", "puts gets", "hello", "Vlang\x001\x00ruby\x00F.code.tio\x009\x00puts getsF.input.tio\x005\x00helloR"},
+        {"unicode", "puts 'é'", "", "Vlang\x001\x00ruby\x00F.code.tio\x009\x00puts 'é'R"},
+        {"empty", "", "", "Vlang\x001\x00ruby\x00F.code.tio\x000\x00R"},
+    } {
+        t.Run(tt.name, func(t *testing.T) {
+            payload, err := buildPayload("ruby", tt.code, tt.stdin)
+            if err != nil {
+                t.Fatal(err)
+            }
+            reader := flate.NewReader(bytes.NewReader(payload))
+            defer reader.Close()
+            got, err := io.ReadAll(reader)
+            if err != nil {
+                t.Fatal(err)
+            }
+            if string(got) != tt.want {
+                t.Fatalf("payload = %q, want %q", got, tt.want)
+            }
+        })
     }
 }
 
-func TestBuildPayloadWithStdin(t *testing.T) {
-    payload, err := buildPayload("python3", `x = input()`, "hello")
-    if err != nil {
-        t.Fatalf("buildPayload: %v", err)
+type roundTripFunc func(*http.Request) (*http.Response, error)
+
+func (f roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
+    return f(req)
+}
+
+func TestRunFileReportsResponseError(t *testing.T) {
+    original := http.DefaultTransport
+    t.Cleanup(func() { http.DefaultTransport = original })
+    http.DefaultTransport = roundTripFunc(func(req *http.Request) (*http.Response, error) {
+        if req.URL.Path != "/cgi-bin/run/api/" {
+            t.Errorf("unexpected API path: %s", req.URL.Path)
+        }
+        return &http.Response{
+            StatusCode: http.StatusOK,
+            Body:       io.NopCloser(strings.NewReader("")),
+            Header:     make(http.Header),
+        }, nil
+    })
+    path := filepath.Join(t.TempDir(), "test.rb")
+    if err := os.WriteFile(path, []byte("puts :HELLO"), 0600); err != nil {
+        t.Fatal(err)
     }
-    if len(payload) == 0 {
-        t.Fatal("payload is empty")
+    err := runFile("ruby", path)
+    if err == nil || err.Error() != "unexpected empty response from tio.run" {
+        t.Fatalf("runFile error = %v, want response error", err)
     }
 }
 
@@ -44,6 +85,17 @@ func TestRunPython(t *testing.T) {
     }
     if result.Error != "" {
         t.Errorf("unexpected error: %s", result.Error)
+    }
+}
+
+func TestRunRuby(t *testing.T) {
+    skipIfNoNetwork(t)
+    result, err := Run("ruby", "puts :HELLO")
+    if err != nil {
+        t.Fatal(err)
+    }
+    if result.Stdout != "HELLO\n" || result.Error != "" || !strings.Contains(result.Debug, "Exit code: 0") {
+        t.Fatalf("unexpected Ruby result: %+v", result)
     }
 }
 
